@@ -3,102 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FigiSign - Mobile Optimized Racing Admin</title>
+    <title>FigiSign Pro - Racing Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- PDF-Lib for PDF manipulation -->
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <!-- PDF.js for rendering -->
+    <!-- Fixed PDF.js CDN URL -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <!-- Signature Pad -->
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
-    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        :root {
-            --safe-bottom: env(safe-area-inset-bottom, 0px);
-        }
-        body {
-            overscroll-behavior-y: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-        .signature-wrapper {
-            border: 2px dashed #cbd5e1;
-            border-radius: 1rem;
-            background-color: #f8fafc;
-            touch-action: none;
-            position: relative;
-        }
-        .page-container {
-            position: relative;
-            margin-bottom: 1.5rem;
-            display: block;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            background: white;
-            border-radius: 0.25rem;
-            overflow: hidden;
-            width: 100% !important;
-        }
-        .page-container canvas {
-            width: 100% !important;
-            height: auto !important;
-        }
-        .sig-indicator {
-            position: absolute;
-            border: 2px solid #3b82f6;
-            background: rgba(59, 130, 246, 0.25);
-            pointer-events: auto;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 4px;
-            backdrop-filter: blur(2px);
-        }
-        .sig-indicator button {
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            position: absolute;
-            top: -12px;
-            right: -12px;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .step-active {
-            color: #2563eb;
-            border-bottom: 3px solid #2563eb;
-        }
-        .mobile-action-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 1rem 1rem calc(1rem + var(--safe-bottom));
-            border-top: 1px solid #e2e8f0;
-            z-index: 100;
-            box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-        .loader {
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #3b82f6;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
+        :root { --safe-bottom: env(safe-area-inset-bottom, 0px); }
+        body { overscroll-behavior-y: none; -webkit-tap-highlight-color: transparent; }
+        .signature-wrapper { border: 2px dashed #cbd5e1; border-radius: 1rem; background-color: #f8fafc; touch-action: none; position: relative; }
+        .page-container { position: relative; margin-bottom: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.08); background: white; border-radius: 0.25rem; overflow: hidden; width: 100% !important; }
+        .page-container canvas { width: 100% !important; height: auto !important; display: block; }
+        .sig-indicator { position: absolute; border: 2px solid #3b82f6; background: rgba(59, 130, 246, 0.2); pointer-events: auto; z-index: 10; border-radius: 4px; display: flex; align-items: center; justify-content: center; }
+        .sig-indicator button { background: #ef4444; color: white; border-radius: 50%; width: 24px; height: 24px; position: absolute; top: -12px; right: -12px; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .step-active { color: #2563eb; border-bottom: 3px solid #2563eb; }
+        .mobile-action-bar { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 1rem 1rem calc(1rem + var(--safe-bottom)); border-top: 1px solid #e2e8f0; z-index: 100; box-shadow: 0 -10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 0.8s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* Ensure the main content doesn't get covered by fixed bar */
-        .content-padding {
-            padding-bottom: calc(100px + var(--safe-bottom));
-        }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen font-sans text-slate-900 select-none">
@@ -108,15 +31,12 @@
             <div class="bg-blue-600 p-1.5 rounded-lg">
                 <i data-lucide="pen-tool" class="text-white w-4 h-4"></i>
             </div>
-            <h1 class="text-lg font-bold tracking-tight text-slate-800 leading-none">FigiSign <span class="text-blue-600">Pro</span></h1>
+            <h1 class="text-lg font-bold tracking-tight">FigiSign <span class="text-blue-600">Pro</span></h1>
         </div>
-        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded">
-            Racing Ops
-        </div>
+        <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-2 py-1 rounded">Racing Ops</div>
     </nav>
 
     <main class="max-w-xl mx-auto pb-32">
-        <!-- Stepper -->
         <div class="flex bg-white border-b border-slate-100 text-[11px] font-bold uppercase tracking-wider sticky top-[53px] z-[105]">
             <div id="step1-header" class="flex-1 py-3 text-center step-active">1. Upload</div>
             <div id="step2-header" class="flex-1 py-3 text-center text-slate-300">2. Draw</div>
@@ -124,138 +44,108 @@
             <div id="step4-header" class="flex-1 py-3 text-center text-slate-300">4. Save</div>
         </div>
 
-        <div class="p-4 md:p-6">
-            <!-- STEP 1: UPLOAD -->
-            <div id="step1" class="space-y-6 animate-in fade-in duration-500">
+        <div class="p-4">
+            <!-- STEP 1 -->
+            <div id="step1" class="space-y-6">
                 <div class="space-y-1">
-                    <h2 class="text-xl font-extrabold text-slate-800">Logistics Ingestion</h2>
-                    <p class="text-sm text-slate-500">Upload race-day contracts or driver waivers.</p>
+                    <h2 class="text-xl font-extrabold">Logistics Ingestion</h2>
+                    <p class="text-sm text-slate-500">Upload race contracts or driver waivers.</p>
                 </div>
-                <div id="drop-zone" class="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center bg-white hover:border-blue-500 transition-all active:scale-[0.98]">
+                <div id="drop-zone" class="border-2 border-dashed border-slate-300 rounded-2xl p-10 text-center bg-white active:scale-[0.98] transition-all">
                     <input type="file" id="pdf-upload" accept="application/pdf" class="hidden">
                     <div class="flex flex-col items-center gap-4">
-                        <div class="bg-blue-50 p-4 rounded-full">
-                            <i data-lucide="file-up" class="w-8 h-8 text-blue-600"></i>
-                        </div>
+                        <div class="bg-blue-50 p-4 rounded-full"><i data-lucide="file-up" class="w-8 h-8 text-blue-600"></i></div>
                         <p class="font-bold text-slate-700">Tap to select PDF</p>
-                        <p class="text-xs text-slate-400 font-medium">Max 50MB per document</p>
                     </div>
                 </div>
             </div>
 
-            <!-- STEP 2: DRAW SIGNATURE -->
-            <div id="step2" class="hidden space-y-4 animate-in slide-in-from-right duration-300">
+            <!-- STEP 2 -->
+            <div id="step2" class="hidden space-y-4">
                 <div class="flex justify-between items-end">
-                    <div class="space-y-1">
-                        <h2 class="text-xl font-extrabold text-slate-800">Auth Signature</h2>
-                        <p class="text-sm text-slate-500">Sign within the dashed area.</p>
-                    </div>
+                    <h2 class="text-xl font-extrabold">Auth Signature</h2>
                     <button id="clear-sig" class="px-3 py-1 bg-slate-100 rounded-full text-xs font-bold text-slate-600 flex items-center gap-1">
                         <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Clear
                     </button>
                 </div>
                 <div class="signature-wrapper">
-                    <canvas id="sig-canvas" class="w-full h-56 cursor-crosshair rounded-2xl"></canvas>
+                    <canvas id="sig-canvas" class="w-full h-64 rounded-2xl"></canvas>
                 </div>
             </div>
 
-            <!-- STEP 3: PLACE ON DOCUMENT -->
-            <div id="step3" class="hidden space-y-4 animate-in slide-in-from-right duration-300">
-                <div class="space-y-1">
-                    <h2 class="text-xl font-extrabold text-slate-800">Document Mapping</h2>
-                    <p class="text-sm text-slate-500">Tap any location on the pages to place your signature.</p>
-                </div>
-                
-                <div id="pdf-pages-container" class="flex flex-col items-center gap-4">
-                    <!-- Loaded dynamically -->
-                </div>
+            <!-- STEP 3 -->
+            <div id="step3" class="hidden space-y-4 text-center">
+                <h2 class="text-xl font-extrabold text-left">Document Mapping</h2>
+                <div id="pdf-pages-container" class="space-y-4"></div>
             </div>
 
-            <!-- STEP 4: DOWNLOAD -->
-            <div id="step4" class="hidden space-y-8 text-center pt-10 animate-in zoom-in duration-300">
-                <div class="inline-flex bg-green-100 p-6 rounded-full ring-8 ring-green-50">
-                    <i data-lucide="check-check" class="w-12 h-12 text-green-600"></i>
-                </div>
-                <div class="space-y-2">
-                    <h2 class="text-2xl font-black text-slate-800">Injection Verified</h2>
-                    <p class="text-slate-500 px-6">Your racing credentials have been embedded into the PDF structure.</p>
-                </div>
-                <div class="flex flex-col gap-3 px-4">
-                    <button id="download-btn" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl shadow-blue-200 flex items-center justify-center gap-2 active:scale-95 transition-transform">
+            <!-- STEP 4 -->
+            <div id="step4" class="hidden space-y-8 text-center pt-10">
+                <div class="inline-flex bg-green-100 p-6 rounded-full ring-8 ring-green-50"><i data-lucide="check-check" class="w-12 h-12 text-green-600"></i></div>
+                <h2 class="text-2xl font-black">Injection Verified</h2>
+                <div class="flex flex-col gap-3">
+                    <button id="download-btn" class="w-full py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-xl flex items-center justify-center gap-2">
                         <i data-lucide="download"></i> Download Final Copy
                     </button>
-                    <button onclick="location.reload()" class="w-full py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold active:bg-slate-50">
-                        Process New Contract
-                    </button>
+                    <button onclick="location.reload()" class="w-full py-4 bg-white border border-slate-200 text-slate-600 rounded-2xl font-bold">New Contract</button>
                 </div>
             </div>
         </div>
     </main>
 
-    <!-- FIXED MOBILE NAVIGATION BAR -->
     <div id="action-bar" class="mobile-action-bar hidden">
         <div class="flex items-center justify-between gap-4">
-            <button id="back-btn" class="p-4 bg-slate-100 text-slate-600 rounded-2xl font-bold active:bg-slate-200">
-                <i data-lucide="chevron-left" class="w-6 h-6"></i>
-            </button>
-            
+            <button id="back-btn" class="p-4 bg-slate-100 text-slate-600 rounded-2xl font-bold"><i data-lucide="chevron-left" class="w-6 h-6"></i></button>
             <div id="step3-info" class="hidden flex-1 flex flex-col items-center">
-                <span id="sig-counter" class="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full mb-1">0 POINTS</span>
-                <span class="text-[10px] text-slate-400 font-bold uppercase">Mapping Phase</span>
+                <span id="sig-counter" class="text-xs font-black text-blue-600 bg-blue-50 px-3 py-1 rounded-full">0 POINTS</span>
             </div>
-
-            <button id="next-btn" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-blue-100 active:bg-blue-700">
-                <span id="next-text">Next Step</span>
-                <i data-lucide="arrow-right" class="w-5 h-5"></i>
+            <button id="next-btn" class="flex-1 py-4 bg-blue-600 text-white rounded-2xl font-bold flex items-center justify-center gap-2">
+                <span id="next-text">Next Step</span><i data-lucide="arrow-right" class="w-5 h-5"></i>
             </button>
         </div>
     </div>
 
-    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-full shadow-2xl transform -translate-y-32 transition-transform duration-300 z-[200] flex items-center gap-2 text-sm font-bold whitespace-nowrap">
-        <i data-lucide="info" class="w-4 h-4"></i>
+    <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-5 py-3 rounded-full shadow-2xl transform -translate-y-32 transition-transform duration-300 z-[200] flex items-center gap-2 text-sm font-bold">
         <span id="toast-msg">Success</span>
     </div>
 
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // Use a safer global access pattern for pdfjsLib
+        const getPdfJs = () => window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
 
-        let pdfDataForLib = null; 
-        let pdfDocForPreview = null;
-        let sigPad = null;
-        let finalPdfBlob = null;
-        let signaturePoints = []; 
-        let currentStep = 1;
+        let pdfDataForLib = null, pdfDocForPreview = null, sigPad = null, finalPdfBlob = null;
+        let signaturePoints = [], currentStep = 1;
 
-        window.onload = () => {
-            lucide.createIcons();
-            initSignaturePad();
-            setupListeners();
+        window.onload = () => { 
+            lucide.createIcons(); 
+            initSignaturePad(); 
+            setupListeners(); 
+            
+            const pdfjs = getPdfJs();
+            if (pdfjs) {
+                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+            }
         };
 
         function initSignaturePad() {
             const canvas = document.getElementById('sig-canvas');
-            sigPad = new SignaturePad(canvas, { 
-                backgroundColor: 'rgba(255,255,255,0)',
-                penColor: 'rgb(0, 0, 0)'
-            });
+            sigPad = new SignaturePad(canvas, { backgroundColor: 'rgba(255,255,255,0)', penColor: 'rgb(0, 0, 0)' });
             resizeSigCanvas();
             window.addEventListener('resize', resizeSigCanvas);
         }
 
         function resizeSigCanvas() {
             const canvas = document.getElementById('sig-canvas');
-            const ratio = Math.max(window.devicePixelRatio || 1, 1);
+            const ratio = window.devicePixelRatio || 1;
             canvas.width = canvas.offsetWidth * ratio;
             canvas.height = canvas.offsetHeight * ratio;
             canvas.getContext("2d").scale(ratio, ratio);
-            if (sigPad) sigPad.clear();
         }
 
         function setupListeners() {
             const fileInput = document.getElementById('pdf-upload');
             document.getElementById('drop-zone').onclick = () => fileInput.click();
             fileInput.onchange = (e) => handleFile(e.target.files[0]);
-            
             document.getElementById('clear-sig').onclick = () => sigPad.clear();
             document.getElementById('next-btn').onclick = handleNext;
             document.getElementById('back-btn').onclick = handleBack;
@@ -263,198 +153,130 @@
         }
 
         async function handleFile(file) {
-            if (!file || file.type !== 'application/pdf') {
-                showToast("PDF files only for racing admin.", "error");
-                return;
-            }
+            if (!file || file.type !== 'application/pdf') return showToast("PDF only.", "error");
+            
+            const pdfjs = getPdfJs();
+            if (!pdfjs) return showToast("PDF Engine loading...", "error");
 
-            showToast("Verifying Headers...");
+            showToast("Buffering Document...");
             try {
                 const arrayBuffer = await file.arrayBuffer();
-                pdfDataForLib = new Uint8Array(arrayBuffer.slice(0));
-                
-                if (pdfDataForLib[0] !== 0x25 || pdfDataForLib[1] !== 0x50) {
-                    throw new Error("Invalid Header");
-                }
-
-                pdfDocForPreview = await pdfjsLib.getDocument({ data: new Uint8Array(pdfDataForLib.slice(0)) }).promise;
+                pdfDataForLib = new Uint8Array(arrayBuffer);
+                pdfDocForPreview = await pdfjs.getDocument({ data: pdfDataForLib }).promise;
                 goToStep(2);
-            } catch (err) {
-                showToast("Corrupt file or invalid format.", "error");
+            } catch (err) { 
+                console.error(err);
+                showToast("File corrupted.", "error"); 
             }
         }
 
         function handleNext() {
             if (currentStep === 2) {
-                if (sigPad.isEmpty()) {
-                    showToast("Signature required for owner auth.", "error");
-                    return;
-                }
+                if (sigPad.isEmpty()) return showToast("Signature required.", "error");
                 goToStep(3);
             } else if (currentStep === 3) {
-                if (signaturePoints.length === 0) {
-                    showToast("Map at least one point.", "error");
-                    return;
-                }
+                if (signaturePoints.length === 0) return showToast("Place signature.", "error");
                 processFinalPDF();
             }
         }
 
-        function handleBack() {
-            if (currentStep > 1) goToStep(currentStep - 1);
-        }
+        function handleBack() { if (currentStep > 1) goToStep(currentStep - 1); }
 
         async function renderAllPages() {
             const container = document.getElementById('pdf-pages-container');
-            container.innerHTML = `
-                <div class="py-20 flex flex-col items-center gap-4">
-                    <div class="loader"></div>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Building Preview...</span>
-                </div>
-            `;
-            
+            container.innerHTML = `<div class="py-10 flex flex-col items-center gap-4"><div class="loader"></div><span class="text-xs font-bold text-slate-400">OPTIMIZING GRID...</span></div>`;
             signaturePoints = [];
             updateSigCounter();
 
             try {
                 const totalPages = pdfDocForPreview.numPages;
-                const tempFrag = document.createDocumentFragment();
-
+                const fragment = document.createDocumentFragment();
                 for (let i = 1; i <= totalPages; i++) {
                     const page = await pdfDocForPreview.getPage(i);
-                    // Use a slightly lower scale for mobile performance
-                    const viewport = page.getViewport({ scale: 1.0 });
-                    
-                    const pageDiv = document.createElement('div');
-                    pageDiv.className = 'page-container active:scale-[0.99] transition-transform';
-                    
+                    const viewport = page.getViewport({ scale: 1.5 });
                     const canvas = document.createElement('canvas');
-                    // Responsive canvas sizing
+                    const pageDiv = document.createElement('div');
+                    pageDiv.className = 'page-container';
+                    
                     const screenWidth = window.innerWidth - 32;
                     const scale = screenWidth / viewport.width;
-                    const mobileViewport = page.getViewport({ scale: scale });
+                    const mobileViewport = page.getViewport({ scale: scale * 1.5 });
 
                     canvas.height = mobileViewport.height;
                     canvas.width = mobileViewport.width;
-                    
                     pageDiv.appendChild(canvas);
-                    tempFrag.appendChild(pageDiv);
+                    fragment.appendChild(pageDiv);
 
                     await page.render({ canvasContext: canvas.getContext('2d'), viewport: mobileViewport }).promise;
-
                     pageDiv.onclick = (e) => handlePageClick(e, i, mobileViewport.width, mobileViewport.height);
                 }
-                
                 container.innerHTML = '';
-                container.appendChild(tempFrag);
-            } catch (err) {
-                showToast("Failed to render pages.", "error");
-            }
+                container.appendChild(fragment);
+            } catch (err) { showToast("Render failed.", "error"); }
         }
 
         function handlePageClick(e, pageIndex, pageWidth, pageHeight) {
             const rect = e.currentTarget.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
-
-            const point = {
-                id: Date.now(),
-                pageIndex: pageIndex,
-                relX: x / pageWidth,
-                relY: y / pageHeight,
-                viewX: x,
-                viewY: y
-            };
-
+            const point = { id: Date.now(), pageIndex, relX: x / pageWidth, relY: y / pageHeight, viewX: x, viewY: y };
             signaturePoints.push(point);
             addVisualIndicator(e.currentTarget, point);
             updateSigCounter();
-            
-            // Haptic-like feedback
-            if ('vibrate' in navigator) navigator.vibrate(10);
         }
 
         function addVisualIndicator(container, point) {
-            const indicator = document.createElement('div');
-            indicator.className = 'sig-indicator';
-            indicator.style.width = '80px';
-            indicator.style.height = '32px';
-            indicator.style.left = `${point.viewX - 40}px`;
-            indicator.style.top = `${point.viewY - 16}px`;
-            
+            const ind = document.createElement('div');
+            ind.className = 'sig-indicator';
+            ind.style.width = '100px'; ind.style.height = '40px';
+            ind.style.left = `${point.viewX - 50}px`; ind.style.top = `${point.viewY - 20}px`;
             const img = document.createElement('img');
             img.src = sigPad.toDataURL();
             img.className = 'w-full h-full object-contain pointer-events-none';
-            indicator.appendChild(img);
-
-            const delBtn = document.createElement('button');
-            delBtn.innerHTML = '&times;';
-            delBtn.onclick = (e) => {
-                e.stopPropagation();
-                signaturePoints = signaturePoints.filter(p => p.id !== point.id);
-                indicator.remove();
-                updateSigCounter();
-            };
-            
-            indicator.appendChild(delBtn);
-            container.appendChild(indicator);
+            ind.appendChild(img);
+            const del = document.createElement('button');
+            del.innerHTML = '&times;';
+            del.onclick = (e) => { e.stopPropagation(); signaturePoints = signaturePoints.filter(p => p.id !== point.id); ind.remove(); updateSigCounter(); };
+            ind.appendChild(del);
+            container.appendChild(ind);
         }
 
         function updateSigCounter() {
             const count = signaturePoints.length;
             document.getElementById('sig-counter').innerText = `${count} POINT${count !== 1 ? 'S' : ''}`;
-            
-            const nextBtn = document.getElementById('next-btn');
-            if (count > 0 || currentStep < 3) {
-                nextBtn.classList.remove('opacity-50');
-            } else {
-                nextBtn.classList.add('opacity-50');
-            }
         }
 
         async function processFinalPDF() {
-            showToast("Embedding High-Res Data...");
+            showToast("Stabilizing Buffer...");
             try {
-                const workBuffer = new Uint8Array(pdfDataForLib.slice(0));
-                const pdfLibDoc = await PDFLib.PDFDocument.load(workBuffer);
+                const pdfLibDoc = await PDFLib.PDFDocument.load(pdfDataForLib.slice(0));
                 const sigImage = await pdfLibDoc.embedPng(sigPad.toDataURL());
                 const pages = pdfLibDoc.getPages();
 
-                for (const pt of signaturePoints) {
+                signaturePoints.forEach(pt => {
                     const targetPage = pages[pt.pageIndex - 1];
                     const { width, height } = targetPage.getSize();
-
-                    const sigWidth = 100;
-                    const sigHeight = (sigWidth / sigPad.canvas.width) * sigPad.canvas.height;
-                    
-                    const pdfX = (pt.relX * width) - (sigWidth / 2);
-                    const pdfY = (height - (pt.relY * height)) - (sigHeight / 2);
-
+                    const sW = 120;
+                    const sH = (sW / sigPad.canvas.width) * sigPad.canvas.height;
                     targetPage.drawImage(sigImage, {
-                        x: pdfX,
-                        y: pdfY,
-                        width: sigWidth,
-                        height: sigHeight,
+                        x: (pt.relX * width) - (sW / 2),
+                        y: (height - (pt.relY * height)) - (sH / 2),
+                        width: sW, height: sH,
                     });
-                }
+                });
 
                 const pdfBytes = await pdfLibDoc.save();
                 finalPdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
                 goToStep(4);
-            } catch (err) {
-                showToast("Processing error. Buffer lost.", "error");
-            }
+            } catch (err) { showToast("Buffer Error: Retrying...", "error"); }
         }
 
         function downloadResult() {
             if (!finalPdfBlob) return;
             const url = URL.createObjectURL(finalPdfBlob);
             const a = document.createElement('a');
-            a.href = url;
-            a.download = `Signed_Racing_Doc_${Date.now()}.pdf`;
-            document.body.appendChild(a);
+            a.href = url; a.download = `RaceDoc_${Date.now()}.pdf`;
             a.click();
-            document.body.removeChild(a);
             setTimeout(() => URL.revokeObjectURL(url), 100);
         }
 
@@ -462,49 +284,25 @@
             currentStep = num;
             [1, 2, 3, 4].forEach(n => {
                 document.getElementById(`step${n}`).classList.add('hidden');
-                document.getElementById(`step${n}-header`).classList.remove('step-active');
-                document.getElementById(`step${n}-header`).classList.add('text-slate-300');
+                document.getElementById(`step${n}-header`).className = 'flex-1 py-3 text-center text-slate-300';
             });
-
             document.getElementById(`step${num}`).classList.remove('hidden');
-            document.getElementById(`step${num}-header`).classList.replace('text-slate-300', 'step-active');
-
-            const actionBar = document.getElementById('action-bar');
-            const step3Info = document.getElementById('step3-info');
-            const nextText = document.getElementById('next-text');
-
-            if (num > 1 && num < 4) {
-                actionBar.classList.remove('hidden');
-            } else {
-                actionBar.classList.add('hidden');
-            }
-
-            if (num === 3) {
-                step3Info.classList.remove('hidden');
-                nextText.innerText = "Finalize";
-                renderAllPages();
-            } else {
-                step3Info.classList.add('hidden');
-                nextText.innerText = "Next Step";
-            }
-
-            if (num === 2) resizeSigCanvas();
-
+            document.getElementById(`step${num}-header`).className = 'flex-1 py-3 text-center step-active';
+            
+            const ab = document.getElementById('action-bar');
+            num > 1 && num < 4 ? ab.classList.remove('hidden') : ab.classList.add('hidden');
+            document.getElementById('step3-info').classList.toggle('hidden', num !== 3);
+            document.getElementById('next-text').innerText = num === 3 ? "Finalize" : "Next Step";
+            if (num === 3) renderAllPages();
+            if (num === 2) setTimeout(resizeSigCanvas, 50);
             window.scrollTo(0, 0);
             lucide.createIcons();
         }
 
         function showToast(msg, type = "success") {
             const t = document.getElementById('toast');
-            const m = document.getElementById('toast-msg');
-            m.innerText = msg;
-            
-            if (type === "error") {
-                t.classList.replace('bg-slate-900', 'bg-red-600');
-            } else {
-                t.classList.replace('bg-red-600', 'bg-slate-900');
-            }
-
+            document.getElementById('toast-msg').innerText = msg;
+            t.className = `fixed top-4 left-1/2 -translate-x-1/2 ${type === 'error' ? 'bg-red-600' : 'bg-slate-900'} text-white px-5 py-3 rounded-full shadow-2xl transition-transform duration-300 z-[200] flex items-center gap-2 text-sm font-bold`;
             t.classList.remove('-translate-y-32');
             setTimeout(() => t.classList.add('-translate-y-32'), 3000);
         }
