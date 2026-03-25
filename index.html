@@ -6,8 +6,8 @@
     <title>FigiSign Pro - Racing Admin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
-    <!-- Fixed PDF.js CDN URL -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <!-- Using a more stable version of PDF.js for mobile -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -110,8 +110,17 @@
     </div>
 
     <script>
-        // Use a safer global access pattern for pdfjsLib
-        const getPdfJs = () => window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+        // Robust PDF engine detection
+        let pdfjsLibInstance = null;
+        
+        const initPdfEngine = () => {
+            pdfjsLibInstance = window['pdfjs-dist/build/pdf'] || window.pdfjsLib;
+            if (pdfjsLibInstance) {
+                pdfjsLibInstance.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+                return true;
+            }
+            return false;
+        };
 
         let pdfDataForLib = null, pdfDocForPreview = null, sigPad = null, finalPdfBlob = null;
         let signaturePoints = [], currentStep = 1;
@@ -120,11 +129,8 @@
             lucide.createIcons(); 
             initSignaturePad(); 
             setupListeners(); 
-            
-            const pdfjs = getPdfJs();
-            if (pdfjs) {
-                pdfjs.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-            }
+            // Attempt immediate init
+            initPdfEngine();
         };
 
         function initSignaturePad() {
@@ -155,18 +161,25 @@
         async function handleFile(file) {
             if (!file || file.type !== 'application/pdf') return showToast("PDF only.", "error");
             
-            const pdfjs = getPdfJs();
-            if (!pdfjs) return showToast("PDF Engine loading...", "error");
+            // Final check/retry for PDF engine
+            if (!pdfjsLibInstance && !initPdfEngine()) {
+                showToast("Starting PDF Engine...", "info");
+                // Wait 1 second and try one last time
+                await new Promise(r => setTimeout(r, 1000));
+                if (!initPdfEngine()) return showToast("Engine failed to start. Refresh.", "error");
+            }
 
             showToast("Buffering Document...");
             try {
                 const arrayBuffer = await file.arrayBuffer();
                 pdfDataForLib = new Uint8Array(arrayBuffer);
-                pdfDocForPreview = await pdfjs.getDocument({ data: pdfDataForLib }).promise;
+                // Load document using the specific instance
+                const loadingTask = pdfjsLibInstance.getDocument({ data: pdfDataForLib });
+                pdfDocForPreview = await loadingTask.promise;
                 goToStep(2);
             } catch (err) { 
-                console.error(err);
-                showToast("File corrupted.", "error"); 
+                console.error("PDF Load Error:", err);
+                showToast("File corrupted or incompatible.", "error"); 
             }
         }
 
@@ -212,7 +225,10 @@
                 }
                 container.innerHTML = '';
                 container.appendChild(fragment);
-            } catch (err) { showToast("Render failed.", "error"); }
+            } catch (err) { 
+                console.error("Render Error:", err);
+                showToast("Render failed.", "error"); 
+            }
         }
 
         function handlePageClick(e, pageIndex, pageWidth, pageHeight) {
@@ -247,7 +263,7 @@
         }
 
         async function processFinalPDF() {
-            showToast("Stabilizing Buffer...");
+            showToast("Injecting Signature...");
             try {
                 const pdfLibDoc = await PDFLib.PDFDocument.load(pdfDataForLib.slice(0));
                 const sigImage = await pdfLibDoc.embedPng(sigPad.toDataURL());
@@ -268,7 +284,10 @@
                 const pdfBytes = await pdfLibDoc.save();
                 finalPdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
                 goToStep(4);
-            } catch (err) { showToast("Buffer Error: Retrying...", "error"); }
+            } catch (err) { 
+                console.error("Finalization Error:", err);
+                showToast("Buffer Error. Try again.", "error"); 
+            }
         }
 
         function downloadResult() {
